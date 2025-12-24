@@ -43,20 +43,20 @@ const Header = () => {
   }, []);
 
   return (
-    <div className="absolute w-full px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
+    <div className="absolute w-full px-2 py-3  bg-gradient-to-b from-black z-10 flex justify-between">
       <img className="w-48" src={LOGO} alt="logo" />
       {user && (
         <div className="flex p-4">
           <img
-            className="w-12 h-12 rounded-md "
+            className="w-10 h-10 rounded-md "
             src={user?.photoURL}
             alt="userIcon"
           />
           <button
             onClick={handleSignOut}
-            className="font-bold text-white hover:text-red-700"
+            className="font-bold text-white hover:text-red-800 ml-2 mt-[-12px]"
           >
-            (Sign Out)
+            Sign Out
           </button>
         </div>
       )}

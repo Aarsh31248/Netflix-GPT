@@ -53,7 +53,7 @@ const Login = () => {
             .catch((error) => {
               setErrorMessage(error.message);
             });
-          console.log(user);
+
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -69,7 +69,7 @@ const Login = () => {
       )
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -122,7 +122,7 @@ const Login = () => {
         <p className="text-lg font-bold text-red-600">{errorMessage}</p>
         <button
           onClick={handleButtonClick}
-          className="p-4 my-8 bg-red-600 w-full rounded-lg font-bold"
+          className="p-4 my-8 hover:bg-[#C11119] bg-[#E50914] w-full rounded-lg font-bold"
         >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
