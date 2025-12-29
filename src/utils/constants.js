@@ -4,14 +4,8 @@ export const USER_AVATAR =
   "https://i.pinimg.com/736x/5b/50/e7/5b50e75d07c726d36f397f6359098f58.jpg";
 export const LOGIN_BG_IMG =
   "https://assets.nflxext.com/ffe/siteui/vlv3/6d631aa6-567d-46ef-a644-b5b00e4334d2/web/IN-en-20251215-TRIFECTA-perspective_f1cab02a-e42b-4913-a7d9-c5fe0f94f68d_large.jpg";
-export const API_OPTIONS = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${process.env.REACT_APP_TMDB_V4_TOKEN}`,
-  },
-};
 export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500/";
+
 export const SUPPORTED_LANGUAGES = [
   { identifier: "english", name: "English" },
   { identifier: "hindi", name: "Hindi" },

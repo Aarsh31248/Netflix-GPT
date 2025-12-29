@@ -1,28 +1,35 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS } from "../utils/constants";
 import { addNowPlayingMovies } from "../utils/Redux/moviesSlice";
+import { startLoading, stopLoading } from "../utils/Redux/loadingSlice";
 import { useEffect } from "react";
 
 const useNowPlayingMovies = () => {
   const dispatch = useDispatch();
-  const nowPlayingMovies = useSelector((store) => store.movies.nowPlayingMovies)
+  const nowPlayingMovies = useSelector(
+    (store) => store.movies.nowPlayingMovies
+  );
 
   const getNowPlayingMovies = async () => {
+    dispatch(startLoading());
+
     try {
       const data = await fetch(
-        "https://api.themoviedb.org/3/movie/now_playing?page=1",
-        API_OPTIONS
+        "https://netflix-gpt-backend-xwym.onrender.com/tmdb/now-playing"
       );
 
       const json = await data.json();
       dispatch(addNowPlayingMovies(json.results));
     } catch (error) {
       console.error("Failed to fetch now playing movies", error);
+    } finally {
+      dispatch(stopLoading());
     }
   };
 
   useEffect(() => {
-    if(!nowPlayingMovies) getNowPlayingMovies();
+    if (!nowPlayingMovies) {
+      getNowPlayingMovies();
+    }
   }, []);
 };
 

@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/Redux/userSlice";
 import { LOGIN_BG_IMG, USER_AVATAR } from "../utils/constants";
 import lang from "../utils/languageConstants";
+import { startLoading, stopLoading } from "../utils/Redux/loadingSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -27,6 +28,8 @@ const Login = () => {
     const message = checkValidData(email.current.value, password.current.value);
     setErrorMessage(message);
     if (message) return;
+
+    dispatch(startLoading());
 
     if (!isSignInForm) {
       // Sign Up Logic
@@ -53,13 +56,11 @@ const Login = () => {
               );
             })
             .catch((error) => {
-              setErrorMessage(error.message);
+              setErrorMessage(error.code + " - " + error.message);
             });
         })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+        .finally(() => {
+          dispatch(stopLoading());
         });
     } else {
       // Sign In Logic
@@ -72,9 +73,10 @@ const Login = () => {
           const user = userCredential.user;
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + "-" + errorMessage);
+          setErrorMessage(error.code + " - " + error.message);
+        })
+        .finally(() => {
+          dispatch(stopLoading());
         });
     }
   };
@@ -129,7 +131,7 @@ const Login = () => {
         </button>
         <p className="p-4">
           {isSignInForm
-            ? lang[langKey].newToNetflixText 
+            ? lang[langKey].newToNetflixText
             : lang[langKey].alreadyRegisteredText}
           <span
             className="hover:text-red-600 cursor-pointer font-bold ml-2"

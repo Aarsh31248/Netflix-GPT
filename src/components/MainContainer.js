@@ -1,18 +1,10 @@
 import { useSelector } from "react-redux";
 import VideoTitle from "./VideoTitle";
 import VideoBackground from "./VideoBackground";
-import { Commet } from "react-loading-indicators";
 
 const MainContainer = () => {
   const movies = useSelector((store) => store.movies?.nowPlayingMovies);
-  
-  if (!movies) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-black">
-        <Commet color="#ff0000" size="large" />
-      </div>
-    );
-  }
+  if (!movies || movies.length === 0) return null;
 
   const mainMovie = movies[0];
   const { original_title, overview, id } = mainMovie;

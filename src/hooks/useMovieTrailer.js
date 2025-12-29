@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { API_OPTIONS } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addTrailerVideo } from "../utils/Redux/moviesSlice";
 
@@ -11,10 +10,8 @@ const useMovieTrailer = (movieId) => {
 
   // Fetching the Trailer video and updating the store with trailer video data
   const getMovieVideo = async () => {
-    const data = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
-      API_OPTIONS
-    );
+    const data = await fetch(`https://netflix-gpt-backend-xwym.onrender.com/tmdb/${movieId}/trailer`);
+
     const json = await data.json();
 
     const filterData = json.results.filter((video) => video.type === "Trailer");

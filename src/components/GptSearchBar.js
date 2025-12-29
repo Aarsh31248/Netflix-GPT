@@ -1,43 +1,68 @@
 import { useDispatch, useSelector } from "react-redux";
 import lang from "../utils/languageConstants";
 import { useRef } from "react";
-import { API_OPTIONS } from "../utils/constants";
 import { addGptMovieResult } from "../utils/Redux/gptSlice";
+import { startLoading, stopLoading } from "../utils/Redux/loadingSlice";
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
-  let searchText = useRef(null);
+  const searchText = useRef(null);
   const dispatch = useDispatch();
 
   const searchMovieTmdb = async (movie) => {
     const data = await fetch(
-      `https://api.themoviedb.org/3/search/movie?query=${movie}&include_adult=false&language=en-US&page=1`,
-      API_OPTIONS
+      `https://netflix-gpt-backend-xwym.onrender.com/tmdb/search?query=${movie}`
     );
     const json = await data.json();
     return json.results;
   };
 
   const handleGptSearchClick = async () => {
-    const res = await fetch("http://localhost:5000/movies", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: searchText.current.value,
-      }),
-    });
+    if (!searchText.current.value.trim()) return;
 
-    const data = await res.json();
-    const gptMovies = data.movies.split(",");
-    console.log(gptMovies);
+    dispatch(startLoading());
 
-    // For each movie i will search TMDB API
-    const promiseArray = gptMovies.map((movie) => searchMovieTmdb(movie));
-    const tmdbResults = await Promise.all(promiseArray);
-    console.log(tmdbResults);
-    dispatch(
-      addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
-    );
+    try {
+      // 1️⃣ GPT backend call
+      const res = await fetch(
+        "https://netflix-gpt-backend-xwym.onrender.com/movies",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: searchText.current.value,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("GPT request failed");
+      }
+
+      const data = await res.json();
+
+      if (!data.movies) {
+        throw new Error("No movies returned by GPT");
+      }
+
+      const gptMovies = data.movies.split(",");
+
+      //  TMDB searches
+      const tmdbResults = await Promise.all(
+        gptMovies.map((movie) => searchMovieTmdb(movie.trim()))
+      );
+
+      dispatch(
+        addGptMovieResult({
+          movieNames: gptMovies,
+          movieResults: tmdbResults,
+        })
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      dispatch(stopLoading());
+    }
   };
 
   return (
